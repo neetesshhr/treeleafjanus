@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: janus-deployment
+  labels:
+    app: janus
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: janus
+  template:
+    metadata:
+      labels:
+        app: janus
+    spec:
+      containers:
+        - name: janus-container
+          image: canyan/janus-gateway
+          ports:
+            - containerPort: 8088
+            - containerPort: 8089
+            - containerPort: 8188
+            - containerPort: 8189
+            - containerPort: 10000
+              protocol: UDP
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: janus-service
+spec:
+  selector:
+    app: janus
+  ports:
+    - name: port-8088
+      protocol: TCP
+      port: 8088
+      targetPort: 8088
+    - name: port-8089
+      protocol: TCP
+      port: 8089
+      targetPort: 8089
+    - name: port-8188
+      protocol: TCP
+      port: 8188
+      targetPort: 8188
+    - name: port-8189
+      protocol: TCP
+      port: 8189
+      targetPort: 8189
+    - name: port-10000-10200
+      protocol: UDP
+      port: 10000
+      targetPort: 10000
+      nodePort: 30000
+  type: NodePort
